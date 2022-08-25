@@ -1,137 +1,109 @@
 <div class="border m-5" >
     <h1>Cadastro de Produtos</h1>
 </div>
+
 <?php
+  if(isset($_POST['gravar'])) {
+    $erro = false;
 
-    function fValida($valores) {
-      $msg = "";
-      $valido = true;
-      if(empty($valores['nome_produto'])) {
-        $msg = "Nome do Produto Inválido";
-        $valido = false;
-      }
-      if(empty($valores['preco_produto'])) {
-        $msg = "Preço do Produto Inválido";
-        $valido = false;
-      }
-      if(empty($valores['nome_produto'])) {
-        $msg = "Nome Inválido";
-        $valido = false;
-      } elseif($valores['categoria_produto']=='00') {
-        $msg = "Selecione a Categoria";
-        $valido = false;
-      } elseif($valores['fornecedor_produto']=='00') {
-        $msg = "Selecione o Fornecedor";
-        $valido = false;
-      } elseif(empty($valores['estoque_produto'])) {
-        $msg = "Estoque Inválido";
-        $valido = false;
-      } elseif(empty($valores['reposicao_produto'])) {
-        $msg = "Reposição Inválido";
-        $valido = false;
-      } elseif(empty($valores['ordem_produto'])) {
-        $msg = "Quantidade em Ordem Inválido";
-        $valido = false;
-      } elseif(empty($valores['qntunidade_produto'])) {
-        $msg = "Quantidade por Unidade Inválido";
-        $valido = false;
-      } elseif(empty($valores['descontinuado_produto'])) {
-        $msg = "Selecione se o Produto Descontinuado";
-        $valido = false;
-      }
-      echo "<h3>".$msg."</h3>";
-      return $valido;
+    (isset($_POST['nome']) && empty($_POST['nome']))?$erro=true:'';
+    (isset($_POST['preco']) && empty($_POST['preco']))?$erro=true:'';
+    (isset($_POST['categoria']) && ($_POST['categoria']=='00'))?$erro=true:'';
+    (isset($_POST['fornecedor']) && ($_POST['fornecedor']=='00'))?$erro=true:'';
+    (isset($_POST['estoque']) && empty($_POST['estoque']))?$erro=true:'';
+    (isset($_POST['reposicao']) && empty($_POST['reposicao']))?$erro=true:'';
+    (isset($_POST['ordem']) && empty($_POST['ordem']))?$erro=true:'';
+    (isset($_POST['qntuni']) && empty($_POST['qntuni']))?$erro=true:'';
+    (isset($_POST['descontinuado']) && ($_POST['descontinuado']=='00'))?$erro=true:'';
 
+    if(!$erro) {
+      try {
+        $sql = "INSERT into produtos(NomeProduto, PrecoUnitario, IDCategoria, IDFornecedor, UnidadesEmEstoque, NivelDeReposicao, UnidadesEmOrdem, QuantidadePorUnidade, Descontinuado)
+                      values(:NomeProduto, :PrecoUnitario, :IDCategoria, :IDFornecedor, :UnidadesEmEstoque, :NivelDeReposicao, :UnidadesEmOrdem, :QuantidadePorUnidade, :Descontinuado)";
+        $consulta = $conn->prepare($sql);
+        $resultado = $consulta->execute(array("NomeProduto" => $_POST['nome'],
+                                 "PrecoUnitario" => $_POST['preco'],
+                                 "IDCategoria" => $_POST['categoria'],
+                                 "IDFornecedor" => $_POST['fornecedor'],
+                                 "UnidadesEmEstoque" => $_POST['estoque'],
+                                 "NivelDeReposicao" => $_POST['reposicao'],
+                                 "UnidadesEmOrdem" => $_POST['ordem'],
+                                 "QuantidadePorUnidade" => $_POST['qntuni'],
+                                 "Descontinuado" => $_POST['descontinuado']));
+        echo "<div class=\"alert alert-success\">Cadastro realizado com sucesso!</div>";
+      } catch(error) {
+        echo "<div class=\"alert alert-danger\">Erro!Cadastro não realizado.</div>";
+      }
+    } else {
+      echo "<div class=\"alert alert-warning\">Informe todos os campos!</div>";
     }
 
-    if(isset($_POST['gravar'])) {
-        $valores = array( "NomeProduto" => $_POST['nome_produto'],
-                          "PrecoUnitario" => $_POST['preco_produto'],
-                          "IDCategoria" => $_POST['categoria_produto'],
-                          "IDFornecedor" => $_POST['fornecedor_produto'],
-                          "UnidadesEmEstoque" => $_POST['estoque_produto'],
-                          "NivelDeReposicao" => $_POST['reposicao_produto'],
-                          "UnidadesEmOrdem" => $_POST['ordem_produto'],
-                          "QuantidadePorUnidade" => $_POST['qntunidade_produto'],
-                          "Descontinuado" => $_POST['descontinuado_produto']);
-        if(fValida($valores)) {
-            try {
-                $sql = "INSERT into produtos(NomeProduto, PrecoUnitario, IDCategoria, IDFornecedor, UnidadesEmEstoque, NivelDeReposicao, UnidadesEmOrdem, QuantidadePorUnidade, Descontinuado)
-                                    values ( :NomeProduto, :PrecoUnitario, :IDCategoria, :IDFornecedor, :UnidadesEmEstoque, :NivelDeReposicao, :UnidadesEmOrdem, :QuantidadePorUnidade, :Descontinuado)";
-                $consulta = $conn->prepare($sql);
-                $consulta->execute($valores);
-                echo '<div class="alert alert-success">Cadastro realizado com sucesso!</div>';
-            } catch (error) {
-                echo '<div class="alert alert-danger">Erro! Cadastro não realizado.</div>';
-            }
-        } else {
-            echo '<div class="alert alert-warning">Informe os campos obrigatórios!</div>';
-        }
-    }
+  }
 ?>
+
 <form class="row g-3" method="post">
   <div class="col-md-6">
-    <label for="nome_produto" class="form-label">Nome do Produto</label>
-    <input type="text" class="form-control" id="nome_produto" name="nome_produto">
+    <label for="nome" class="form-label">Nome</label>
+    <input type="text" class="form-control" id="nome" name="nome">
   </div>
   <div class="col-md-6">
-    <label for="preco_produto" class="form-label">Preço Unitário</label>
-    <input type="text" class="form-control" id="preco_produto" name="preco_produto">
+    <label for="preco" class="form-label">Preço</label>
+    <input type="text" class="form-control" id="preco" name="preco">
   </div>
-  <div class="col-md-4">
-    <label for="categoria_produto" class="form-label">Categoria</label>
-    <select id="categoria_produto" class="form-select" name="categoria_produto">
+  <div class="col-6">
+    <label for="categoria" class="form-label">Categoria</label>
+    <select id="categoria" name="categoria" class="form-select">
+      <?php
+        $sql="SELECT * from categorias";
+        $consulta = $conn->prepare($sql);
+        $consulta->execute();
+        echo "<option value=\"00\"selected>Selecionar</option>";
+        while ($linha = $consulta->fetch()) {
+          echo "<option value=\"{$linha['IDCategoria']}\">{$linha['NomeCategoria']}</option>";
+        }
+      ?>
+    </select>
+  </div>
+  <div class="col-6">
+    <label for="fornecedor" class="form-label">Fornecedor</label>
+    <select id="fornecedor" name="fornecedor" class="form-select">
     <?php
-            $sql = "SELECT * from categorias";
-            $consulta = $conn->prepare($sql);
-            $consulta->execute();
-            echo "<option value=\"00\">Selecionar</option>";
-            while($linha = $consulta->fetch()) {
-                echo "<option value=\"{$linha['IDCategoria']}\">{$linha['NomeCategoria']}</option>";
-            }
-        ?>  
+        $sql="SELECT * from fornecedores";
+        $consulta = $conn->prepare($sql);
+        $consulta->execute();
+        echo "<option value=\"00\"selected>Selecionar</option>";
+        while ($linha = $consulta->fetch()) {
+          echo "<option value=\"{$linha['IDFornecedor']}\">{$linha['NomeCompanhia']}</option>";
+        }
+      ?>
     </select>
   </div>
   <div class="col-md-4">
-    <label for="fornecedor_produto" class="form-label">Fornecedor</label>
-    <select id="fornecedor_produto" class="form-select" name="fornecedor_produto">
-        <?php
-            $sql = "SELECT * from fornecedores";
-            $consulta = $conn->prepare($sql);
-            $consulta->execute();
-            echo "<option value=\"00\">Selecionar</option>";
-            while($linha = $consulta->fetch()) {
-                echo "<option value=\"{$linha['IDFornecedor']}\">{$linha['NomeCompanhia']}</option>";
-            }
-        ?>  
-    </select>
-  </div>
-  <div class="col-12">
-    <label for="estoque_produto" class="form-label">Quantidade em Estoque</label>
-    <input type="text" class="form-control" id="estoque_produto" name="estoque_produto">
-  </div>
-  <div class="col-12">
-    <label for="reposicao_produto" class="form-label">Nível de Reposição</label>
-    <input type="text" class="form-control" id="reposicao_produto" name="reposicao_produto">
-  </div>
-  <div class="col-md-6">
-    <label for="ordem_produto" class="form-label">Quantidade em Ordem</label>
-    <input type="text" class="form-control" id="ordem_produto" name="ordem_produto">
-  </div>
-  <div class="col-md-6">
-    <label for="qntunidade_produto" class="form-label">Quantidade por Unidade</label>
-    <input type="text" class="form-control" id="qntunidade_produto" name="qntunidade_produto">
+    <label for="estoque" class="form-label">Estoque</label>
+    <input type="text" class="form-control" id="estoque" name="estoque">
   </div>
   <div class="col-md-4">
-    <label for="descontinuado_produto" class="form-label">Descontinuado</label>
-    <select id="descontinuado_produto" class="form-select" name="descontinuado_produto">
-    <?php
-            echo "<option value=\"00\">Selecionar</option>";
-            echo "<option>".['Descontinuado']."</option>";
-    ?>
+    <label for="reposicao" class="form-label">Nivel de Reposição</label>
+    <input type="text" class="form-control" id="reposicao" name="reposicao"> 
+  </div>
+  <div class="col-md-4">
+    <label for="ordem" class="form-label">Quantidade em Ordem</label>
+    <input type="text" class="form-control" id="ordem" name="ordem">
+  </div>
+  <div class="col-6">
+    <label for="qntuni" class="form-label">Quantidade Por Unidade</label>
+    <input type="text" class="form-control" id="qntuni" name="qntuni">
+  </div>
+  <div class="col-6">
+    <label for="descontinuado" class="form-label">Descontinuado</label>
+    <select id="descontinuado" name="descontinuado" class="form-select">
+      <option value="00" selected>Selecionar</option>
+      <option>T</option>
+      <option>F</option>
     </select>
   </div>
   <div class="col-12">
     <button type="submit" name="gravar" class="btn btn-primary">Cadastrar</button>
   </div>
 </form>
+ 
