@@ -14,7 +14,6 @@
     (isset($_POST['reposicao']) && empty($_POST['reposicao']))?$erro=true:'';
     (isset($_POST['ordem']) && empty($_POST['ordem']))?$erro=true:'';
     (isset($_POST['qntuni']) && empty($_POST['qntuni']))?$erro=true:'';
-    (isset($_POST['descontinuado']) && ($_POST['descontinuado']=='00'))?$erro=true:'';
 
     if(!$erro) {
       try {
@@ -97,8 +96,7 @@
   <div class="col-6">
     <label for="descontinuado" class="form-label">Descontinuado</label>
     <select id="descontinuado" name="descontinuado" class="form-select">
-      <option value="00" selected>Selecionar</option>
-      <option>T</option>
+      <option selected>T</option>
       <option>F</option>
     </select>
   </div>
