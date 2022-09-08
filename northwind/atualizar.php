@@ -3,58 +3,18 @@
 </div>
 <?php
 
-    function fValida($valores) {
-      $msg = "";
-      $valido = true;
-      if(empty($valores['nome_produto'])) {
-        $msg = "Nome do Produto Inválido";
-        $valido = false;
-      }
-      if(empty($valores['preco_produto'])) {
-        $msg = "Preço do Produto Inválido";
-        $valido = false;
-      }
-      if(empty($valores['nome_produto'])) {
-        $msg = "Nome Inválido";
-        $valido = false;
-      } elseif($valores['categoria_produto']=='00') {
-        $msg = "Selecione a Categoria";
-        $valido = false;
-      } elseif($valores['fornecedor_produto']=='00') {
-        $msg = "Selecione o Fornecedor";
-        $valido = false;
-      } elseif(empty($valores['estoque_produto'])) {
-        $msg = "Estoque Inválido";
-        $valido = false;
-      } elseif(empty($valores['reposicao_produto'])) {
-        $msg = "Reposição Inválido";
-        $valido = false;
-      } elseif(empty($valores['ordem_produto'])) {
-        $msg = "Quantidade em Ordem Inválido";
-        $valido = false;
-      } elseif(empty($valores['qntunidade_produto'])) {
-        $msg = "Quantidade por Unidade Inválido";
-        $valido = false;
-      } elseif(empty($valores['descontinuado_produto'])) {
-        $msg = "Selecione se o Produto Descontinuado";
-        $valido = false;
-      }
-      echo "<h3>".$msg."</h3>";
-      return $valido;
-
-    }
-
     if(isset($_POST['atualizar'])) {
-        $valores = array( "NomeProduto" => $_POST['nome_produto'],
-                          "PrecoUnitario" => $_POST['preco_produto'],
-                          "IDCategoria" => $_POST['categoria_produto'],
-                          "IDFornecedor" => $_POST['fornecedor_produto'],
-                          "UnidadesEmEstoque" => $_POST['estoque_produto'],
-                          "NivelDeReposicao" => $_POST['reposicao_produto'],
-                          "UnidadesEmOrdem" => $_POST['ordem_produto'],
-                          "QuantidadePorUnidade" => $_POST['qntunidade_produto'],
-                          "Descontinuado" => $_POST['descontinuado_produto']);
-        if(fValida($valores)) {
+      $erro = false;
+
+      (isset($_POST['nome']) && empty($_POST['nome']))?$erro=true:'';
+      (isset($_POST['preco']) && empty($_POST['preco']))?$erro=true:'';
+      (isset($_POST['categoria']) && ($_POST['categoria']=='00'))?$erro=true:'';
+      (isset($_POST['fornecedor']) && ($_POST['fornecedor']=='00'))?$erro=true:'';
+      (isset($_POST['estoque']) && empty($_POST['estoque']))?$erro=true:'';
+      (isset($_POST['reposicao']) && empty($_POST['reposicao']))?$erro=true:'';
+      (isset($_POST['ordem']) && empty($_POST['ordem']))?$erro=true:'';
+      (isset($_POST['qntuni']) && empty($_POST['qntuni']))?$erro=true:''; 
+        if(!$erro) {
             try {
                 $sql = "UPDATE produtos
                         set  NomeProduto = :NomeProduto,
@@ -67,10 +27,18 @@
                         QuantidadePorUnidade = :QuantidadePorUnidade,
                         Descontinuado = :Descontinuado";
                 $atualiza = $conn->prepare($sql);
-                $atualiza->execute($valores);
-                echo '<div class="alert alert-success">Cadastro realizado com sucesso!</div>';
+                $atualiza->execute(array( "NomeProduto" => $_POST['nome_produto'],
+                                           "PrecoUnitario" => $_POST['preco_produto'],
+                                           "IDCategoria" => $_POST['categoria_produto'],
+                                           "IDFornecedor" => $_POST['fornecedor_produto'],
+                                           "UnidadesEmEstoque" => $_POST['estoque_produto'],
+                                           "NivelDeReposicao" => $_POST['reposicao_produto'],
+                                           "UnidadesEmOrdem" => $_POST['ordem_produto'],
+                                           "QuantidadePorUnidade" => $_POST['qntunidade_produto'],
+                                           "Descontinuado" => $_POST['descontinuado_produto']));
+                echo '<div class="alert alert-success">Atualização realizada com sucesso!</div>';
             } catch (error) {
-                echo '<div class="alert alert-danger">Erro! Cadastro não realizado.</div>';
+                echo '<div class="alert alert-danger">Erro! Atualização não realizada.</div>';
             }
         } else {
             echo '<div class="alert alert-warning">Informe os campos obrigatórios!</div>';
@@ -146,10 +114,12 @@
         </label>
     </div>
     <div class="form-check">
-        <input class="form-check-input" type="radio" name="descontinuado_produto" id="descontinuado_produto2" value="<?php echo $linha['Descontinuado']; ?>">
-        <label class="form-check-label" for="descontinuado_produto2">
-            T
-        </label>
+    <label for="descontinuado" class="form-label">Descontinuado</label>
+    <select id="descontinuado" name="descontinuado" class="form-select">
+      <option selected><?php echo $linha['Descontinuado']; ?></option>
+      <option>T</option>
+      <option>F</option>
+    </select>
     </div> 
   </div>
   <div class="col-12">
