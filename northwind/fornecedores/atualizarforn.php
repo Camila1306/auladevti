@@ -29,8 +29,8 @@
                   Regiao = :Regiao, 
                   Fax = :Fax, 
                   Website = :Website";
-          $consulta = $conn->prepare($sql);
-          $resultado = $consulta->execute(array("NomeCompanhia" => $_POST['nomecompanhia'],
+          $atualiza = $conn->prepare($sql);
+          $resultado = $atualiza->execute(array("NomeCompanhia" => $_POST['nomecompanhia'],
                                    "NomeContato" => $_POST['nomecontato'],
                                    "TItuloContato" => $_POST['titulocontato'],
                                    "Endereco" => $_POST['endereco'],
@@ -39,10 +39,8 @@
                                    "Pais" => $_POST['pais'],
                                    "Telefone" => $_POST['telefone'],
                                    "Regiao" => $_POST['regiao'],
-                                   "Fax" => $_POST['fax'],
+                                   "Fax" => $_POST['fax'], 
                                    "Website" => $_POST['website']));
-                                   $atualiza = $conn->prepare($sql);
-                                   $atualiza->execute($valores);
                                    echo '<div class="alert alert-success">Atualizado com sucesso!</div>';
         } catch (error) {
                                    echo '<div class="alert alert-danger">Erro! Atualização não realizada.</div>';

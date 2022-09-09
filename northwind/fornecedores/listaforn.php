@@ -45,8 +45,8 @@
                 <td><?php echo $linha['Fax'];?></td>
                 <td><?php echo $linha['Website'];?></td>
                 <td>
-                    <a href="?pagina=p_atualizar&codigo=<?php echo $linha['IDProduto']; ?>" class="btn btn-outline-primary">Atualizar</a>
-                    <a href="?pagina=p_deletar&codigo=<?php echo $linha['IDProduto']; ?>" class="btn btn-outline-danger">Deletar</a>
+                    <a href="?pagina=p_atualizarforn&codigo=<?php echo $linha['IDFornecedor']; ?>" class="btn btn-outline-primary">Atualizar</a>
+                    <a href="?pagina=p_deletarforn&codigo=<?php echo $linha['IDFornecedor']; ?>" class="btn btn-outline-danger">Deletar</a>
                 </td>
             </tr>
             <?php
